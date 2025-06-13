@@ -1,0 +1,39 @@
+.controls {
+  margin-top: 25px;
+}
+
+.btn {
+  background: linear-gradient(45deg, #00ffff, #0080ff);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 8px;
+  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 255, 255, 0.4);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.share-btn {
+  background: linear-gradient(45deg, #e056fd, #686de0);
+  margin-top: 15px;
+}

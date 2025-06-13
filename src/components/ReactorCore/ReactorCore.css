@@ -1,0 +1,134 @@
+.reactor-core {
+  width: 280px;
+  height: 280px;
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.15), transparent);
+  border: 3px solid rgba(0, 255, 255, 0.5);
+  animation: reactorPulse 3s ease-in-out infinite;
+}
+
+@keyframes reactorPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); 
+  }
+  50% { 
+    transform: scale(1.02); 
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); 
+  }
+}
+
+.color-orb {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  animation: orbFloat 4s ease-in-out infinite;
+  box-shadow: 0 0 15px var(--orb-color);
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.color-orb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 25px var(--orb-color);
+}
+
+.color-orb:active {
+  transform: scale(0.95);
+}
+
+.explosion {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  animation: explode 0.6s ease-out forwards;
+  width: 35px;
+  height: 35px;
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(6);
+    opacity: 0;
+  }
+}
+
+.combo-text {
+  position: absolute;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  animation: comboFloat 1.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes comboFloat {
+  0% {
+    transform: scale(0.8) translateY(0);
+    opacity: 0;
+  }
+  20% {
+    transform: scale(1.1) translateY(-15px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9) translateY(-60px);
+    opacity: 0;
+  }
+}
+
+.chain-multiplier {
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  background: linear-gradient(45deg, #ff6b6b, #ffa726);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9em;
+  transform: scale(0);
+  animation: multiplierPop 0.4s ease-out forwards;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes multiplierPop {
+  0% { transform: scale(0) rotate(-90deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@media (max-width: 480px) {
+  .reactor-core {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .color-orb {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 380px) {
+  .reactor-core {
+    width: 220px;
+    height: 220px;
+  }
+  
+  .color-orb {
+    width: 28px;
+    height: 28px;
+  }
+}

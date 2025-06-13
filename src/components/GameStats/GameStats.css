@@ -1,0 +1,26 @@
+.game-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 12px 8px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.stat-value {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #00ffff;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.8em;
+  color: #ccc;
+  margin-top: 4px;
+}
