@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+// src/components/GameContainer/GameContainer.jsx
+import React, { useState, useEffect, useCallback } from 'react';
 import GameStats from '../GameStats/GameStats';
 import TargetIndicator from '../TargetIndicator/TargetIndicator';
 import ReactorCore from '../ReactorCore/ReactorCore';
@@ -25,65 +26,15 @@ const GameContainer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTarget, setCurrentTarget] = useState(null);
   const [orbs, setOrbs] = useState([]);
-  const [gameOver, setGameOver] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  
-  const gameTimerRef = useRef(null);
-  const spawnTimerRef = useRef(null);
-  const reactorRef = useRef(null);
 
-  useEffect(() => {
-    // Initial setup
-    setNewTarget();
-    spawnOrb();
-    spawnOrb();
-    spawnOrb();
+  // Memoized functions to prevent infinite re-renders
+  const setNewTarget = useCallback(() => {
+    const target = colors[Math.floor(Math.random() * colors.length)];
+    setCurrentTarget(target);
+  }, [colors]);
 
-    return () => {
-      clearTimers();
-    };
-  }, []);
-
-  const clearTimers = () => {
-    if (gameTimerRef.current) clearInterval(gameTimerRef.current);
-    if (spawnTimerRef.current) clearInterval(spawnTimerRef.current);
-  };
-
-  const startGame = () => {
-    setScore(0);
-    setCombo(0);
-    setMaxCombo(0);
-    setTimeLeft(30);
-    setIsPlaying(true);
-    setGameOver(false);
-    setShowModal(false);
-    
-    clearTimers();
-    startTimer();
-    startSpawning();
-  };
-
-  const startTimer = () => {
-    gameTimerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          endGame();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const startSpawning = () => {
-    spawnTimerRef.current = setInterval(() => {
-      if (orbs.length < 6) {
-        spawnOrb();
-      }
-    }, 1800);
-  };
-
-  const spawnOrb = () => {
+  const spawnOrb = useCallback(() => {
     const colorIndex = Math.floor(Math.random() * colors.length);
     const color = colors[colorIndex];
     
@@ -105,62 +56,46 @@ const GameContainer = () => {
     
     setOrbs(prev => [...prev, newOrb]);
     
-    // Remove orb after some time if not clicked
     setTimeout(() => {
       setOrbs(prev => prev.filter(orb => orb.id !== newOrb.id));
     }, 6000);
+  }, [colors]);
+
+  useEffect(() => {
+    setNewTarget();
+    spawnOrb();
+    spawnOrb();
+    spawnOrb();
+  }, [setNewTarget, spawnOrb]);
+
+  const startGame = () => {
+    setScore(0);
+    setCombo(0);
+    setMaxCombo(0);
+    setTimeLeft(30);
+    setIsPlaying(true);
+    setShowModal(false);
+    setNewTarget();
   };
 
   const handleOrbClick = (orb) => {
     if (!isPlaying) return;
     
     if (orb.colorName === currentTarget.name) {
-      correctHit(orb);
+      const newCombo = combo + 1;
+      setCombo(newCombo);
+      setMaxCombo(prev => Math.max(prev, newCombo));
+      setScore(prev => prev + (10 + (newCombo * 5)));
+      setOrbs(prev => prev.filter(o => o.id !== orb.id));
+      setNewTarget();
     } else {
-      incorrectHit(orb);
+      setCombo(0);
+      setOrbs(prev => prev.filter(o => o.id !== orb.id));
     }
-  };
-
-  const correctHit = (orb) => {
-    const newCombo = combo + 1;
-    setCombo(newCombo);
-    setMaxCombo(prev => Math.max(prev, newCombo));
-    
-    const points = 10 + (newCombo * 5);
-    setScore(prev => prev + points);
-    
-    // Remove the clicked orb
-    setOrbs(prev => prev.filter(o => o.id !== orb.id));
-    
-    setNewTarget();
-  };
-
-  const incorrectHit = (orb) => {
-    setCombo(0);
-    setOrbs(prev => prev.filter(o => o.id !== orb.id));
-  };
-
-  const setNewTarget = () => {
-    const target = colors[Math.floor(Math.random() * colors.length)];
-    setCurrentTarget(target);
-  };
-
-  const pauseGame = () => {
-    setIsPlaying(prev => {
-      if (prev) {
-        clearTimers();
-      } else {
-        startTimer();
-        startSpawning();
-      }
-      return !prev;
-    });
   };
 
   const endGame = () => {
     setIsPlaying(false);
-    clearTimers();
-    setGameOver(true);
     setShowModal(true);
   };
 
@@ -171,21 +106,6 @@ const GameContainer = () => {
     spawnOrb();
     spawnOrb();
     spawnOrb();
-  };
-
-  const shareScore = () => {
-    const text = `💥 I just scored ${score} points in Color Chaos Reactor with a ${maxCombo}x max combo! ⚡ Can you handle the chaos? 🎯 #ColorChaos #ReactorGame #ViralChallenge`;
-    
-    if (navigator.share) {
-      navigator.share({
-        title: 'Color Chaos Reactor Challenge',
-        text: text,
-        url: window.location.href
-      });
-    } else {
-      navigator.clipboard.writeText(text + ' ' + window.location.href);
-      alert('🎯 Score copied! Share the chaos on social media! 💥');
-    }
   };
 
   const getPerformanceMessage = () => {
@@ -209,14 +129,12 @@ const GameContainer = () => {
           orbs={orbs} 
           onOrbClick={handleOrbClick} 
           combo={combo}
-          ref={reactorRef}
         />
       </div>
       
       <Controls 
         isPlaying={isPlaying} 
         onStart={startGame} 
-        onPause={pauseGame} 
       />
       
       <GameOverModal 
@@ -224,8 +142,7 @@ const GameContainer = () => {
         score={score} 
         maxCombo={maxCombo} 
         performanceMessage={getPerformanceMessage()} 
-        onRestart={restartGame} 
-        onShare={shareScore} 
+        onRestart={restartGame}
       />
     </div>
   );
