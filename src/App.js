@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from 'react';
+// src/App.js
+import React from 'react'; // Removed unused hooks
 import GameContainer from './components/GameContainer/GameContainer';
-import './App.css';
 
 function App() {
-  return (
-    <div className="app">
-      <GameContainer />
-    </div>
-  );
+  return <GameContainer />;
 }
 
 export default App;

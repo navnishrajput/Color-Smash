@@ -1,5 +1,4 @@
-// src/components/GameContainer/GameContainer.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import GameStats from '../GameStats/GameStats';
 import TargetIndicator from '../TargetIndicator/TargetIndicator';
 import ReactorCore from '../ReactorCore/ReactorCore';
@@ -8,7 +7,8 @@ import GameOverModal from '../GameOverModal/GameOverModal';
 import './GameContainer.css';
 
 const GameContainer = () => {
-  const colors = [
+  // Colors array wrapped in useMemo to prevent recreation on every render
+  const colors = useMemo(() => [
     { name: 'RED', value: '#ff3838', text: 'CLICK RED!' },
     { name: 'BLUE', value: '#1e90ff', text: 'CLICK BLUE!' },
     { name: 'GREEN', value: '#32cd32', text: 'CLICK GREEN!' },
@@ -17,7 +17,7 @@ const GameContainer = () => {
     { name: 'ORANGE', value: '#ff8c00', text: 'CLICK ORANGE!' },
     { name: 'CYAN', value: '#00ffff', text: 'CLICK CYAN!' },
     { name: 'PINK', value: '#ff69b4', text: 'CLICK PINK!' }
-  ];
+  ], []);
 
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
@@ -28,7 +28,7 @@ const GameContainer = () => {
   const [orbs, setOrbs] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  // Memoized functions to prevent infinite re-renders
+  // Memoized functions with proper dependencies
   const setNewTarget = useCallback(() => {
     const target = colors[Math.floor(Math.random() * colors.length)];
     setCurrentTarget(target);
@@ -61,6 +61,7 @@ const GameContainer = () => {
     }, 6000);
   }, [colors]);
 
+  // Initialize game
   useEffect(() => {
     setNewTarget();
     spawnOrb();
@@ -92,11 +93,6 @@ const GameContainer = () => {
       setCombo(0);
       setOrbs(prev => prev.filter(o => o.id !== orb.id));
     }
-  };
-
-  const endGame = () => {
-    setIsPlaying(false);
-    setShowModal(true);
   };
 
   const restartGame = () => {
