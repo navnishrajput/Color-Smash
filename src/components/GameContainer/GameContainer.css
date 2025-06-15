@@ -1,3 +1,14 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 .game-container {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 25px;
@@ -20,6 +31,42 @@
   -webkit-text-fill-color: transparent;
   animation: rainbowShift 3s ease infinite;
   margin-bottom: 8px;
+}
+
+:root {
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --container-background: rgba(255, 255, 255, 0.1);
+  --container-border: rgba(255, 255, 255, 0.2);
+  --subtitle-color: #ccc;
+}
+
+body.light {
+  --background-color: #f0f0f0;
+  --text-color: #222;
+  --container-background: rgba(255, 255, 255, 0.1);
+  --container-border: rgba(255, 255, 255, 0.2);
+  --subtitle-color: #666;
+}
+
+.game-container {
+  background: var(--container-background);
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+  backdrop-filter: blur(15px);
+  border: 2px solid var(--container-border);
+  position: relative;
+  color: var(--text-color);
+}
+
+.subtitle {
+  color: var(--subtitle-color);
+  margin-bottom: 25px;
+  font-size: 1.1em;
 }
 
 @keyframes rainbowShift {

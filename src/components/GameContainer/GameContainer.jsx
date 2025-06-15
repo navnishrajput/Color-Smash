@@ -27,6 +27,7 @@ const GameContainer = () => {
   const [currentTarget, setCurrentTarget] = useState(null);
   const [orbs, setOrbs] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Memoized functions with proper dependencies
   const setNewTarget = useCallback(() => {
@@ -96,12 +97,44 @@ const GameContainer = () => {
   };
 
   const restartGame = () => {
-    setOrbs([]);
+    setScore(0);
+    setCombo(0);
+    setMaxCombo(0);
+    setTimeLeft(30);
+    setIsPlaying(true);
     setShowModal(false);
+    setOrbs([]);
     setNewTarget();
     spawnOrb();
     spawnOrb();
     spawnOrb();
+  };
+
+  // Timer effect to count down timeLeft when playing
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    if (timeLeft <= 0) {
+      setIsPlaying(false);
+      setShowModal(true);
+      return;
+    }
+
+    const timerId = setTimeout(() => {
+      setTimeLeft(timeLeft - 1);
+      spawnOrb();
+    }, 1000);
+
+    return () => clearTimeout(timerId);
+  }, [isPlaying, timeLeft, spawnOrb]);
+
+  // Pause game handler
+  const pauseGame = () => {
+    setIsPlaying(false);
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(prev => !prev);
   };
 
   const getPerformanceMessage = () => {
@@ -113,7 +146,7 @@ const GameContainer = () => {
   };
 
   return (
-    <div className="game-container">
+    <div className={darkMode ? "game-container dark" : "game-container"}>
       <h1 className="title">💥 COLOR CHAOS</h1>
       <p className="subtitle">React fast! Match the glowing target!</p>
       
@@ -131,6 +164,9 @@ const GameContainer = () => {
       <Controls 
         isPlaying={isPlaying} 
         onStart={startGame} 
+        onPause={pauseGame}
+        onToggleDarkMode={toggleDarkMode}
+        darkMode={darkMode}
       />
       
       <GameOverModal 
